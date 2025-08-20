@@ -71,6 +71,29 @@ class HashMap {
     return false;
   }
 
+  length() {
+    return this.stored;
+  }
+
+  clear() {
+    this.data.fill(undefined);
+    this.stored = 0;
+  }
+
+  keys() {
+    let keyArr = [];
+    this.data.forEach((list) => {
+      if (list !== undefined) {
+        let head = list.Head();
+        while (head !== null) {
+          keyArr.push(head.key);
+          head = head.nextNode;
+        }
+      }
+    });
+    return keyArr;
+  }
+
   #grow(factor) {
     if (this.stored >= factor) {
       this.stored = 0;
