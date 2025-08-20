@@ -30,6 +30,47 @@ class HashMap {
     }
   }
 
+  get(key) {
+    const hashCode = this.hash(key);
+    if (this.data[hashCode] !== undefined) {
+      let head = this.data[hashCode].Head();
+      while (head !== null) {
+        if (head.key === key) {
+          return head.value;
+        }
+        head = head.nextNode;
+      }
+    }
+    return null;
+  }
+
+  has(key) {
+    const hashCode = this.hash(key);
+    if (this.data[hashCode] !== undefined) {
+      let head = this.data[hashCode].Head();
+      while (head !== null) {
+        if (head.key === key) {
+          return true;
+        }
+        head = head.nextNode;
+      }
+    }
+    return false;
+  }
+
+  remove(key) {
+    const hashCode = this.hash(key);
+    if (this.data[hashCode] !== undefined) {
+      const index = this.data[hashCode].find(key);
+      if (index !== null) {
+        this.data[hashCode].removeAt(index);
+        this.stored--;
+        return true;
+      }
+    }
+    return false;
+  }
+
   #grow(factor) {
     if (this.stored >= factor) {
       this.stored = 0;
