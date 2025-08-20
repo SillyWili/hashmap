@@ -94,6 +94,34 @@ class HashMap {
     return keyArr;
   }
 
+  values() {
+    let valuesArr = [];
+    this.data.forEach((list) => {
+      if (list !== undefined) {
+        let head = list.Head();
+        while (head !== null) {
+          valuesArr.push(head.value);
+          head = head.nextNode;
+        }
+      }
+    });
+    return valuesArr;
+  }
+
+  entries() {
+    let pairArr = [];
+    this.data.forEach((list) => {
+      if (list !== undefined) {
+        let head = list.Head();
+        while (head !== null) {
+          pairArr.push([head.key, head.value]);
+          head = head.nextNode;
+        }
+      }
+    });
+    return pairArr;
+  }
+
   #grow(factor) {
     if (this.stored >= factor) {
       this.stored = 0;
