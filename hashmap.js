@@ -24,28 +24,13 @@ class HashMap {
   }
 
   set(key, value) {
-    const hashCode = this.hash(key);
-
     const factor = Math.round(this.growFactor());
-
-    if (this.data[hashCode] === undefined) {
-      const slot = new LinkedList();
-      slot.append(key, value);
-      this.data[hashCode] = slot;
-      this.stored++;
-      this.grow(factor);
-    } else {
-      if (this.data[hashCode].contains(key)) {
-        this.data[hashCode].overwrite(key, value);
-      } else {
-        this.data[hashCode].append(key, value);
-        this.stored++;
-        this.grow(factor);
-      }
+    if (this.#insertIntoArray(this.data, key, value)) {
+      this.#grow(factor);
     }
   }
 
-  grow(factor) {
+  #grow(factor) {
     if (this.stored >= factor) {
       this.stored = 0;
       this.capacity *= 2;
@@ -53,24 +38,30 @@ class HashMap {
       this.data.forEach((list) => {
         let head = list.Head();
         while (head !== null) {
-          const hashCode = this.hash(head.key);
-          if (newArr[hashCode] === undefined) {
-            const slot = new LinkedList();
-            slot.append(head.key, head.value);
-            newArr[hashCode] = slot;
-            this.stored++;
-          } else {
-            if (newArr[hashCode].contains(head.key)) {
-              newArr[hashCode].overwrite(head.key, head.value);
-            } else {
-              newArr[hashCode].append(head.key, head.value);
-              this.stored++;
-            }
-          }
+          this.#insertIntoArray(newArr, head.key, head.value);
           head = head.nextNode;
         }
       });
       this.data = newArr;
     }
+  }
+
+  #insertIntoArray(array, key, value) {
+    const hashCode = this.hash(key);
+    if (array[hashCode] === undefined) {
+      const slot = new LinkedList();
+      slot.append(key, value);
+      array[hashCode] = slot;
+      this.stored++;
+    } else {
+      if (array[hashCode].contains(key)) {
+        array[hashCode].overwrite(key, value);
+        return false;
+      } else {
+        array[hashCode].append(key, value);
+        this.stored++;
+      }
+    }
+    return true;
   }
 }
