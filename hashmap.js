@@ -32,6 +32,7 @@ export default class HashMap {
 
   get(key) {
     const hashCode = this.hash(key);
+    this.#check(hashCode);
     if (this.data[hashCode] !== undefined) {
       let head = this.data[hashCode].Head();
       while (head !== null) {
@@ -46,6 +47,7 @@ export default class HashMap {
 
   has(key) {
     const hashCode = this.hash(key);
+    this.#check(hashCode);
     if (this.data[hashCode] !== undefined) {
       let head = this.data[hashCode].Head();
       while (head !== null) {
@@ -60,6 +62,7 @@ export default class HashMap {
 
   remove(key) {
     const hashCode = this.hash(key);
+    this.#check(hashCode);
     if (this.data[hashCode] !== undefined) {
       const index = this.data[hashCode].find(key);
       if (index !== null) {
@@ -112,14 +115,34 @@ export default class HashMap {
     let pairArr = [];
     this.data.forEach((list) => {
       if (list !== undefined) {
+        let tmp = [];
         let head = list.Head();
         while (head !== null) {
-          pairArr.push([head.key, head.value]);
+          tmp.push([head.key, head.value]);
           head = head.nextNode;
         }
+        pairArr.push(tmp);
       }
     });
     return pairArr;
+  }
+
+  visualizeBucketsStatus() {
+    let spreadArr = [];
+    this.data.forEach((list, index) => {
+      if (list !== undefined) {
+        let count = 0;
+        let head = list.Head();
+        while (head !== null) {
+          count++;
+          head = head.nextNode;
+        }
+        spreadArr.push([`Bucket ${index}`, count]);
+      } else {
+        spreadArr.push([`Bucket ${index}`, 0]);
+      }
+    });
+    return spreadArr;
   }
 
   #grow(factor) {
@@ -142,6 +165,7 @@ export default class HashMap {
 
   #insertIntoArray(array, key, value) {
     const hashCode = this.hash(key);
+    this.#check(hashCode);
     if (array[hashCode] === undefined) {
       const slot = new LinkedList();
       slot.append(key, value);
@@ -157,5 +181,11 @@ export default class HashMap {
       }
     }
     return true;
+  }
+
+  #check(index) {
+    if (index < 0 || index >= this.capacity) {
+      throw new Error("Trying to access index out of bounds");
+    }
   }
 }
