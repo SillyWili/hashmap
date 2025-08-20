@@ -1,6 +1,6 @@
 import { LinkedList } from "./linkedlist.js";
 
-class HashMap {
+export default class HashMap {
   constructor() {
     this.loadFactor = 0.75;
     this.capacity = 16;
@@ -128,10 +128,12 @@ class HashMap {
       this.capacity *= 2;
       let newArr = Array(this.capacity).fill(undefined);
       this.data.forEach((list) => {
-        let head = list.Head();
-        while (head !== null) {
-          this.#insertIntoArray(newArr, head.key, head.value);
-          head = head.nextNode;
+        if (list !== undefined) {
+          let head = list.Head();
+          while (head !== null) {
+            this.#insertIntoArray(newArr, head.key, head.value);
+            head = head.nextNode;
+          }
         }
       });
       this.data = newArr;
